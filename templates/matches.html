@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>View Matches</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <nav>
+    <ul>
+      <li><a href="{{ url_for('dashboard') }}">Home</a></li>
+      <li><a href="{{ url_for('report_lost') }}">Report Lost Item</a></li>
+      <li><a href="{{ url_for('report_found') }}">Report Found Item</a></li>
+      <li><a href="{{ url_for('matches') }}">View Matches</a></li>
+      {% if session['role'] == 'admin' %}
+        <li><a href="{{ url_for('admin') }}">Admin Panel</a></li>
+      {% endif %}
+      <li><a href="#" onclick="confirmLogout()">Logout</a></li>
+    </ul>
+  </nav>
+
+  <h2 class="welcome">Matched Lost & Found Items</h2>
+
+  
+
+  <div id="logoutModal" class="modal">
+    <div class="modal-content">
+      <h3>⚠️ Confirm Logout</h3>
+      <p>Are you sure you want to logout?</p>
+      <div class="modal-buttons">
+        <button onclick="proceedLogout()" class="btn-yes">Yes</button>
+        <button onclick="closeModal()" class="btn-no">Cancel</button>
+      </div>
+    </div>
+  </div>
+  <table>
+  <thead>
+    <tr>
+      <th>Lost Item</th>
+      <th>Found Item</th>
+      <th>Status</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for lost, found in matches %}
+    <tr>
+      <td>
+        <strong>{{ lost.item_name }}</strong><br>
+        <img src="{{ url_for('static', filename='uploads/' ~ lost.picture) }}" width="120"><br>
+        {{ lost.description }}<br>
+        👤 Owner: {{ lost.lost_owner }}<br>
+        📅 Date Lost: {{ lost.date_lost }}
+      </td>
+      <td>
+        <strong>{{ found.item_name }}</strong><br>
+        <img src="{{ url_for('static', filename='uploads/' ~ found.picture) }}" width="120"><br>
+        {{ found.description }}<br>
+        👤 Finder: {{ found.found_owner }}<br>
+        📅 Date Found: {{ found.date_found }}
+      </td>
+      <td>
+  <span class="status">
+    {% if lost.claim_status == 'claimed' or found.claim_status == 'claimed' %}
+      ✅ Claimed
+    {% else %}
+      Potential Match <br>
+      <a href="{{ url_for('claim', lost_id=lost.id, found_id=found.id) }}" class="btn-claim">Claim Item</a>
+    {% endif %}
+  </span>
+</td>
+
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+
+  <script>
+    function confirmLogout() {
+      document.getElementById("logoutModal").style.display = "block";
+    }
+    function closeModal() {
+      document.getElementById("logoutModal").style.display = "none";
+    }
+    function proceedLogout() {
+      window.location.href = "{{ url_for('logout') }}";
+    }
+  </script>
+</body>
+</html>

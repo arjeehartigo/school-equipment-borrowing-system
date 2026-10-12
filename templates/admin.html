@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Admin Panel</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <nav>
+    <ul>
+      <li><a href="{{ url_for('dashboard') }}">Home</a></li>
+      <li><a href="{{ url_for('report_lost') }}">Report Lost Item</a></li>
+      <li><a href="{{ url_for('report_found') }}">Report Found Item</a></li>
+      <li><a href="{{ url_for('matches') }}">View Matches</a></li>
+      {% if session['role'] == 'admin' %}
+        <li><a href="{{ url_for('admin') }}">Admin Panel</a></li>
+      {% endif %}
+      <li><a href="#" onclick="confirmLogout()">Logout</a></li>
+    </ul>
+  </nav>
+
+  <h2 class="mid">Admin Panel</h2>
+  <p class="mid">Approve or Reject Reports</p>
+
+  <!-- Lost Items -->
+  <h3 class="mid">Lost Items</h3>
+  <table>
+    <tr>
+      <th>Item</th>
+      <th>Description</th>
+      <th>Date Lost</th>
+      <th>Picture</th>
+      <th>Status</th>
+      <th>Action</th>
+    </tr>
+    {% for item in lost_items %}
+    <tr>
+      <td>{{ item.item_name }}</td>
+      <td>{{ item.description }}</td>
+      <td>{{ item.date_lost }}</td>
+      <td>
+        <img src="{{ url_for('static', filename='uploads/' ~ item.picture) }}" width="120">
+      </td>
+      <td>{{ item.status }}</td>
+      <td>
+        <a href="{{ url_for('approve', item_type='lost', item_id=item.id) }}">
+          <button>Approve</button>
+        </a>
+        <a href="{{ url_for('reject', item_type='lost', item_id=item.id) }}">
+          <button>Reject</button>
+        </a>
+      </td>
+    </tr>
+    {% endfor %}
+  </table>
+
+  <!-- Found Items -->
+  <h3 class="mid">Found Items</h3>
+  <table>
+    <tr>
+      <th>Item</th>
+      <th>Description</th>
+      <th>Date Found</th>
+      <th>Picture</th>
+      <th>Status</th>
+      <th>Action</th>
+    </tr>
+    {% for item in found_items %}
+    <tr>
+      <td>{{ item.item_name }}</td>
+      <td>{{ item.description }}</td>
+      <td>{{ item.date_found }}</td>
+      <td>
+        <img src="{{ url_for('static', filename='uploads/' ~ item.picture) }}" width="120">
+      </td>
+      <td>{{ item.status }}</td>
+      <td>
+        <a href="{{ url_for('approve', item_type='found', item_id=item.id) }}">
+          <button>Approve</button>
+        </a>
+        <a href="{{ url_for('reject', item_type='found', item_id=item.id) }}">
+          <button>Reject</button>
+        </a>
+      </td>
+    </tr>
+    {% endfor %}
+  </table>
+
+  <!-- Notifications -->
+  <h3 class="mid">Notifications</h3>
+<table>
+  <tr>
+    <th>Message</th>
+    <th>Status</th>
+    <th>Date</th>
+    <th>Action</th>
+  </tr>
+  {% for notif in notifications %}
+  <tr>
+    <td>{{ notif.message }}</td>
+    <td>
+      {% if notif.status == 'unread' %}
+        <strong>{{ notif.status }}</strong>
+      {% else %}
+        {{ notif.status }}
+      {% endif %}
+    </td>
+    <td>{{ notif.created_at }}</td>
+    <td>
+      {% if notif.status == 'unread' %}
+        <a href="{{ url_for('mark_read', notif_id=notif.id) }}">
+          <button>Mark as Read</button>
+        </a>
+      {% endif %}
+    </td>
+  </tr>
+  {% endfor %}
+</table>
+
+  <div id="logoutModal" class="modal">
+    <div class="modal-content">
+      <h3>⚠️ Confirm Logout</h3>
+      <p>Are you sure you want to logout?</p>
+      <div class="modal-buttons">
+        <button onclick="proceedLogout()" class="btn-yes">Yes</button>
+        <button onclick="closeModal()" class="btn-no">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function confirmLogout() {
+      document.getElementById("logoutModal").style.display = "block";
+    }
+    function closeModal() {
+      document.getElementById("logoutModal").style.display = "none";
+    }
+    function proceedLogout() {
+      window.location.href = "{{ url_for('logout') }}";
+    }
+  </script>
+</body>
+</html>

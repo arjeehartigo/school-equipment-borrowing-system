@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Report Found Item</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <nav>
+    <ul>
+      <li><a href="{{ url_for('dashboard') }}">Home</a></li>
+      <li><a href="{{ url_for('report_lost') }}">Report Lost Item</a></li>
+      <li><a href="{{ url_for('report_found') }}">Report Found Item</a></li>
+      <li><a href="{{ url_for('matches') }}">View Matches</a></li>
+      {% if session['role'] == 'admin' %}
+        <li><a href="{{ url_for('admin') }}">Admin Panel</a></li>
+      {% endif %}
+      <li><a href="#" onclick="confirmLogout()">Logout</a></li>
+    </ul>
+  </nav>
+
+  <h2 class="welcome">Report Found Item</h2>
+  <form method="post" enctype="multipart/form-data">
+    <label>Item Name:</label>
+    <input type="text" name="item_name" required>
+
+    <label>Description:</label>
+    <textarea name="description" required></textarea>
+
+    <label>Date Found:</label>
+    <input type="date" name="date_found" required>
+
+    <label>Upload Picture:</label>
+    <!-- IMPORTANT: name="picture" para tugma sa Flask -->
+    <input type="file" name="picture" accept="image/*" required>
+
+    <button type="submit">Submit Report</button>
+  </form>
+
+  <div id="logoutModal" class="modal">
+    <div class="modal-content">
+      <h3>⚠️ Confirm Logout</h3>
+      <p>Are you sure you want to logout?</p>
+      <div class="modal-buttons">
+        <button onclick="proceedLogout()" class="btn-yes">Yes</button>
+        <button onclick="closeModal()" class="btn-no">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function confirmLogout() {
+      document.getElementById("logoutModal").style.display = "block";
+    }
+    function closeModal() {
+      document.getElementById("logoutModal").style.display = "none";
+    }
+    function proceedLogout() {
+      window.location.href = "{{ url_for('logout') }}";
+    }
+  </script>
+</body>
+</html>

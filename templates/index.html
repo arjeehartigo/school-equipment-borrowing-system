@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Login - Lost & Found System</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <div class="login-container">
+    <h1>Lost & Found System</h1>
+
+    {% if error %}
+    <div class="error-message">
+      ⚠️ {{ error }}
+    </div>
+    {% endif %}
+
+    <form action="{{ url_for('login') }}" method="post">
+      <label>Username:</label>
+      <input type="text" name="username" required>
+
+      <label>Password:</label>
+      <input type="password" name="password" required>
+
+      <button type="submit">Login</button>
+    </form>
+    <p class="note">
+      You don’t have an account? <a href="{{ url_for('signup') }}">Sign Up here</a>
+    </p>
+  </div>
+</body>
+</html>

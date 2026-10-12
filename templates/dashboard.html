@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Dashboard - Lost & Found</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <nav>
+    <ul>
+      <li><a href="{{ url_for('dashboard') }}">Home</a></li>
+      <li><a href="{{ url_for('report_lost') }}">Report Lost Item</a></li>
+      <li><a href="{{ url_for('report_found') }}">Report Found Item</a></li>
+      <li><a href="{{ url_for('matches') }}">View Matches</a></li>
+      {% if session['role'] == 'admin' %}
+        <li><a href="{{ url_for('admin') }}">Admin Panel</a></li>
+      {% endif %}
+      <li><a href="#" onclick="confirmLogout()">Logout</a></li>
+    </ul>
+  </nav>
+
+  <section class="mid_mid">
+    <h2 class="welcome">Welcome to the Lost & Found System</h2>
+    <p class="welcome">Select an option from the menu to proceed.</p>
+  </section>
+
+  <!-- 🔑 System Stats Overview -->
+  <div class="system-stats">
+    <div class="stat-card">
+      <h2>Total Lost Items</h2>
+      <p>{{ total_lost }}</p>
+    </div>
+    <div class="stat-card">
+      <h2>Total Found Items</h2>
+      <p>{{ total_found }}</p>
+    </div>
+    <div class="stat-card">
+      <h2>Total Claims</h2>
+      <p>{{ total_claims }}</p>
+    </div>
+    <div class="stat-card">
+      <h2>Pending Approvals</h2>
+      <p>{{ pending_items }}</p>
+    </div>
+  </div>
+
+  <!-- 🔔 Custom Logout Modal -->
+  <div id="logoutModal" class="modal">
+    <div class="modal-content">
+      <h3>⚠️ Confirm Logout</h3>
+      <p>Are you sure you want to logout?</p>
+      <div class="modal-buttons">
+        <button onclick="proceedLogout()" class="btn-yes">Yes</button>
+        <button onclick="closeModal()" class="btn-no">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function confirmLogout() {
+      document.getElementById("logoutModal").style.display = "block";
+    }
+    function closeModal() {
+      document.getElementById("logoutModal").style.display = "none";
+    }
+    function proceedLogout() {
+      window.location.href = "{{ url_for('logout') }}";
+    }
+  </script>
+</body>
+</html>
